@@ -1,18 +1,22 @@
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Login() {
   const { user, supabase } = useAuth()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     if (user) {
       router.push('/dashboard')
     }
   }, [user, router])
+
+  if (!mounted) return null
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -26,7 +30,7 @@ export default function Login() {
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
           providers={['google']}
-          redirectTo={`${window.location.origin}/dashboard`}
+          redirectTo={typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : '/dashboard'}
         />
       </div>
     </div>
